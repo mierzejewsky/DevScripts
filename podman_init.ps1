@@ -12,6 +12,11 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $configSourcePath = Join-Path $scriptDir $configFileName
 $configDestPath = Join-Path $otelcolContribPath $configFileName
 
+if (-not (Test-Path -Path $otelcolContribPath)) {
+    Write-Host "Creating directory $otelcolContribPath"
+    New-Item -ItemType Directory -Path $otelcolContribPath -Force
+}
+
 Write-Host "Copying config.yaml from script folder to $otelcolContribPath"
 Copy-Item -Path $configSourcePath -Destination $configDestPath -Force
 
