@@ -1,0 +1,44 @@
+# To limit exposure to denial of service attacks, change the host in endpoints below from 0.0.0.0 to a specific network interface.
+# See https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/security-best-practices.md#safeguards-against-denial-of-service-attacks
+
+extensions:
+  health_check:
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch:
+
+exporters:
+  debug:
+    verbosity: detailed
+    
+  elasticsearch:
+    endpoints: ["http://elasticsearch:9200"]
+    user: "elastic"
+    password: "testpassword"  
+
+service:
+
+  pipelines:
+
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, elasticsearch]
+
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, elasticsearch]
+
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, elasticsearch]
+
+  extensions: [health_check]
